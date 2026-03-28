@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Board {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sounds    Sound[]
+}
+
+model Sound {
+  id           String   @id @default(cuid())
+  name         String
+  emoji        String   @default("🎵")
+  color        String   @default("#6366f1")
+  keybind      String?
+  volume       Float    @default(1.0)
+  pitch        Float    @default(1.0)
+  speed        Float    @default(1.0)
+  duration     Float    @default(0)
+  waveform     String?
+  tags         String?
+  order        Int      @default(0)
+  boardId      String
+  board        Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  audioData    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Settings {
+  id                    String   @id @default(cuid())
+  masterVolume          Float    @default(0.8)
+  playbackMode          String   @default("overlap")
+  outputDevice          String   @default("default")
+  accentColor           String   @default("#6366f1")
+  theme                 String   @default("dark")
+  startMinimized        Boolean  @default(false)
+  minimizeToTray        Boolean  @default(false)
+  keybindsEnabled       Boolean  @default(true)
+  storagePath           String   @default("")
+  updatedAt             DateTime @updatedAt
+}
